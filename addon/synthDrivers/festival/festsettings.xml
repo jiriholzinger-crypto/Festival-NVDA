@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<settings>
+<voices>
+<voice name="msu_ru_nsh_clunits">
+<replace>
+<item>
+<what>&quot;</what>
+<with>&apos;</with>
+</item>
+<item>
+<what>(?&lt;=[a-zA-Z0-9\x{0401}\x{0410}-\x{044f}\x{0451}])[^a-zA-Z0-9\x{0401}\x{0410}-\x{044f}\x{0451}\x20&apos;-]+(?=[a-zA-Z0-9\x{0401}\x{0410}-\x{044f}\x{0451}])</what>
+<with>\x20</with>
+</item>
+<item>
+<what>[^a-zA-Z0-9\x{0401}\x{0410}-\x{044f}\x{0451}\x20,.!&apos;?;:-]+</what>
+<with></with>
+</item>
+</replace>
+</voice>
+<voice name="czech_ph" cp="28592"/>
+<voice name="czech_dita" cp="28592"/>
+<voice name="czech_krb" cp="28592"/>
+<voice name="czech_machac" cp="28592"/>
+</voices>
+</settings>

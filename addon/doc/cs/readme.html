@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="cs"><head><meta charset="utf-8"><title>Syntezátor Festival pro NVDA</title></head><body>
+<h1>Syntezátor Festival pro NVDA</h1>
+<p>Tento doplněk umožňuje NVDA mluvit hlasovým syntezátorem Festival.</p>
+<p>Jde o převod ovladače Festival od Olgy Jakovlevové (2008–2011) do současných verzí NVDA.</p>
+<h2>Přiložené hlasy</h2>
+<ul>
+<li>Angličtina: kal_diphone, ked_diphone</li>
+<li>Čeština: czech_ph, czech_dita, czech_krb, czech_machac</li>
+</ul>
+<h2>Požadavky</h2>
+<ul>
+<li>64bitové NVDA 2026.1 nebo novější.</li>
+<li>Windows 10 nebo 11.</li>
+</ul>
+<h2>Jak to funguje</h2>
+<p>Festival 2.5.1 (festlib.dll 2.1, 64bitový) běží v malém pomocném programu festhost64.exe.
+Syntetizovanou řeč posílá zpět do NVDA, které ji přehrává stejně jako řeč vestavěných syntezátorů.
+Když Festival spadne, skončí jen pomocný program: NVDA běží dál a pomocný program se spustí znovu
+s další řečí. Po třech pádech během minuty doplněk mlčí, dokud NVDA nerestartujete nebo syntezátor
+znovu nevyberete.</p>
+<h2>Nastavení</h2>
+<ul>
+<li>Hlas, rychlost, výška a hlasitost jsou v nastavení řeči NVDA a v okruhu nastavení syntezátoru.</li>
+<li>Při prvním výběru Festivalu se použije hlas podle jazyka NVDA: czech_ph pro češtinu,
+kal_diphone pro angličtinu, czech_ph pro ostatní jazyky. Potom si NVDA vybraný hlas pamatuje.</li>
+<li>Rychlost 50 je vlastní tempo hlasu; 0 je poloviční a 100 dvojnásobná rychlost.</li>
+<li>Výška 50 je vlastní výška hlasu; 0 a 100 jsou o oktávu níž a výš.</li>
+<li>Funguje „Procento změny výšky pro velká písmena“: velká písmena zní výš.</li>
+<li>Řeč jde na zvukové zařízení vybrané v NVDA a uplatňuje se na ni ztlumení zvuku ostatních aplikací.</li>
+<li>Funguje sledování indexů (plynulé čtení, pohyb kurzoru při plynulém čtení) i pozastavení řeči (Shift).</li>
+<li>Soubor festsettings.xml ve složce doplňku nastavuje kódovou stránku a pravidla nahrazování textu
+pro každý hlas. České hlasy používají ISO-8859-2 (cp 28592). Pravidla nahrazování jsou regulární výrazy
+ECMAScript; pravidla, která nelze přečíst (například perlovský look-behind), se přeskočí a zapíší do festival.log.</li>
+</ul>
+<h2>Stahování dalších hlasů</h2>
+<p>Otevřete nabídku NVDA, Nástroje, <b>Hlasy Festivalu...</b>. Dialog zobrazí hlasy z
+<a href="http://festvox.org/packed/festival/2.5/voices/">festvox.org/packed/festival/2.5/voices</a>
+s jejich velikostí a s tím, zda jsou součástí doplňku nebo už nainstalované.</p>
+<ul>
+<li><b>Instalovat</b> stáhne a rozbalí vybraný hlas. Festival se restartuje; nový hlas pak vyberte
+v nastavení hlasu NVDA (NVDA+Ctrl+V).</li>
+<li>Některé hlasy potřebují další výslovnostní slovník. Britský anglický hlas rab_diphone potřebuje
+slovník OALD; dialog nabídne jeho stažení. Jeho licence povoluje jen nekomerční použití.</li>
+<li><b>Odebrat</b> smaže stažený hlas. Hlasy, které jsou součástí doplňku, odebrat nelze.</li>
+<li><b>Otevřít složku s hlasy</b> otevře složku se staženými hlasy.</li>
+</ul>
+<p>Stažené hlasy a slovníky se ukládají do složky festivalVoices v uživatelské konfiguraci NVDA
+(například %APPDATA%\nvda\festivalVoices), takže zůstanou i po aktualizaci doplňku.
+Můžete tam rozbalit i jiné hlasy Festivalu sami, ve tvaru
+<code>voices\&lt;jazyk&gt;\&lt;hlas&gt;\festvox\&lt;hlas&gt;.scm</code>.</p>
+<p>Každý hlas má vlastní licenci, uloženou v jeho složce. Většina hlasů z festvox.org je volně použitelná;
+slovník OALD je jen pro nekomerční použití.</p>
+<h2>Poznámky</h2>
+<ul>
+<li>Zprávy a chyby Festivalu se zapisují do festival.log ve složce synthDrivers\festival doplňku.</li>
+<li>Když pomocný program spadne, místo pádu se zapíše do festhost-crash.log ve stejné složce
+a v logu NVDA je „festhost64.exe stopped unexpectedly“. Při hlášení problému prosím pošlete oba soubory.</li>
+</ul>
+<h2>Změny</h2>
+<h3>2026.11.5</h3>
+<ul>
+<li>Nový dialog v nabídce Nástroje NVDA pro stahování, instalaci a odebírání hlasů z festvox.org,
+včetně slovníku OALD pro britský anglický hlas.</li>
+<li>Stažené hlasy se ukládají mimo doplněk, takže přežijí aktualizace doplňku.</li>
+<li>Český překlad doplňku.</li>
+</ul>
+<h3>2026.11.4</h3>
+<ul><li>Výchozí hlas se řídí jazykem NVDA (v českém NVDA czech_ph) místo vždy anglického kal_diphone.</li></ul>
+<h3>2026.11.3</h3>
+<ul><li>Festival opět běží v 64bitovém pomocném programu festhost64.exe, takže jeho pád nemůže zavřít NVDA.
+Pomocný program se sám restartuje a pády zapisuje do festhost-crash.log.</li></ul>
+<h3>2026.11.2</h3>
+<ul><li>Rychlost 50 je vlastní tempo každého hlasu (anglické hlasy kal a ked byly o 10 % rychlejší).
+Plynulejší stupnice rychlosti: 0 = poloviční, 100 = dvojnásobná rychlost.</li></ul>
+<h3>2026.11.1</h3>
+<ul><li>Nová 64bitová festlib.dll 2.1, nové nastavení výšky hlasu a podpora změny výšky u velkých písmen.
+Řeč přehrává NVDA: zvukové zařízení, ztlumení ostatních aplikací a přesné indexy.</li></ul>
+<h2>Licence</h2>
+<p>GNU General Public License verze 2 nebo novější. Viz COPYING.txt.</p>
+<p>Původní ovladač a festlib.dll: Copyright (C) 2008–2011 Olga Yakovleva.</p>
+<p>Převod do současného NVDA a 64bitová festlib.dll: Copyright (C) 2026 Jiří Holzinger.</p>
+<p>Festival a Edinburgh Speech Tools: Copyright University of Edinburgh a další (licence typu X11).</p>
+</body></html>

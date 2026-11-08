@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Festival synthesizer for NVDA</title></head><body>
+<h1>Festival synthesizer for NVDA</h1>
+<p>This add-on lets NVDA speak with the Festival Speech Synthesis System.</p>
+<p>It is a port of Olga Yakovleva&#x27;s Festival synthDriver (2008–2011) to current NVDA versions.</p>
+<h2>Included voices</h2>
+<ul>
+<li>English: kal_diphone, ked_diphone</li>
+<li>Czech: czech_ph, czech_dita, czech_krb, czech_machac</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>64-bit NVDA 2026.1 or later.</li>
+<li>Windows 10 or 11.</li>
+</ul>
+<h2>How it works</h2>
+<p>Festival 2.5.1 (festlib.dll 2.1, 64-bit) runs in the small helper program festhost64.exe.
+It sends the synthesized speech back to NVDA, which plays it like the speech of its built-in
+synthesizers. If Festival crashes, only the helper stops: NVDA keeps running and the helper is
+started again with the next speech. After three crashes within a minute the add-on stays silent
+until NVDA is restarted or the synthesizer is selected again.</p>
+<h2>Settings</h2>
+<ul>
+<li>Voice, rate, pitch and volume are in NVDA&#x27;s Speech settings and in the synth settings ring.</li>
+<li>The first time Festival is selected, the voice matching NVDA&#x27;s language is used: czech_ph for Czech,
+kal_diphone for English, czech_ph for other languages. After that NVDA remembers the chosen voice.</li>
+<li>Rate 50 is the voice&#x27;s own tempo; 0 is half speed and 100 double speed.</li>
+<li>Pitch 50 is the voice&#x27;s own pitch; 0 and 100 are one octave lower and higher.</li>
+<li>&quot;Capital pitch change percentage&quot; works: capital letters are spoken with a higher pitch.</li>
+<li>Speech goes to the audio output device selected in NVDA, and audio ducking applies to it.</li>
+<li>Index reporting (say all, moving the caret during say all) and pausing speech (Shift) work.</li>
+<li>festsettings.xml in the add-on folder sets the code page and text replacement rules for each voice.
+Czech voices use ISO-8859-2 (cp 28592). Replacement rules are ECMAScript regular expressions;
+rules that cannot be read (for example Perl look-behind) are skipped and noted in festival.log.</li>
+</ul>
+<h2>Downloading more voices</h2>
+<p>Open the NVDA menu, Tools, <b>Festival voices...</b>. The dialog lists the voices from
+<a href="http://festvox.org/packed/festival/2.5/voices/">festvox.org/packed/festival/2.5/voices</a>
+with their size and whether they are included with the add-on or already installed.</p>
+<ul>
+<li><b>Install</b> downloads and unpacks the selected voice. Festival is restarted, then choose the
+new voice in NVDA&#x27;s voice settings (NVDA+Control+V).</li>
+<li>Some voices need an extra pronunciation dictionary. The British English voice rab_diphone needs
+the OALD dictionary; the dialog offers to download it. Its licence allows non-commercial use only.</li>
+<li><b>Remove</b> deletes a downloaded voice. Voices that come with the add-on cannot be removed.</li>
+<li><b>Open voice folder</b> opens the folder with the downloaded voices.</li>
+</ul>
+<p>Downloaded voices and dictionaries are kept in the festivalVoices folder of the NVDA user
+configuration (for example %APPDATA%\nvda\festivalVoices), so they stay when the add-on is updated.
+You can also unpack other Festival voices there yourself, in the form
+<code>voices\&lt;language&gt;\&lt;voice&gt;\festvox\&lt;voice&gt;.scm</code>.</p>
+<p>Each voice has its own licence, included in its folder. Most festvox.org voices are free to use;
+the OALD dictionary is for non-commercial use only.</p>
+<h2>Notes</h2>
+<ul>
+<li>Festival messages and errors are written to festival.log in the add-on&#x27;s synthDrivers\festival folder.</li>
+<li>If the helper crashes, the place of the crash is written to festhost-crash.log in the same folder,
+and NVDA&#x27;s log says &quot;festhost64.exe stopped unexpectedly&quot;. Please send both files when reporting a problem.</li>
+</ul>
+<h2>Changes</h2>
+<h3>2026.11.5</h3>
+<ul>
+<li>New dialog in the NVDA Tools menu to download, install and remove voices from festvox.org,
+including the OALD dictionary for the British English voice.</li>
+<li>Downloaded voices are kept outside the add-on, so they survive add-on updates.</li>
+<li>Czech translation of the add-on.</li>
+</ul>
+<h3>2026.11.4</h3>
+<ul>
+<li>Default voice follows NVDA&#x27;s language (czech_ph in Czech NVDA) instead of always English kal_diphone.</li>
+</ul>
+<h3>2026.11.3</h3>
+<ul>
+<li>Festival runs in the 64-bit helper process festhost64.exe again, so a crash in Festival cannot close NVDA.
+The helper restarts automatically and records crashes in festhost-crash.log.</li>
+<li>Speech audio is still played by NVDA (output device, ducking, exact index reporting, pitch).</li>
+</ul>
+<h3>2026.11.2</h3>
+<ul>
+<li>Rate 50 is now each voice&#x27;s natural tempo (the English voices kal and ked were 10% too fast).</li>
+<li>Smoother rate scale: 0 = half speed, 100 = double speed (0 used to be ten times slower).</li>
+</ul>
+<h3>2026.11.1</h3>
+<ul>
+<li>New 64-bit festlib.dll 2.1 loaded directly into NVDA; festhost.exe is no longer needed.</li>
+<li>New pitch setting and support for capital pitch change.</li>
+<li>Speech is played by NVDA: output device, audio ducking and exact index reporting.</li>
+<li>Rate and pitch are kept when the voice changes.</li>
+</ul>
+<h2>License</h2>
+<p>GNU General Public License version 2 or later. See COPYING.txt.</p>
+<p>Original driver and festlib.dll: Copyright (C) 2008–2011 Olga Yakovleva.</p>
+<p>Port to modern NVDA and the 64-bit festlib.dll: Copyright (C) 2026 Jiří Holzinger.</p>
+<p>Festival and the Edinburgh Speech Tools: Copyright University of Edinburgh and others (X11-style licence).</p>
+</body></html>
