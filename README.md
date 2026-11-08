@@ -50,22 +50,18 @@ https://github.com/festvox/speech_tools at the tested commit and applies
    ```
 
    (The changes in `addon/doc/*/readme.html` are kept by hand, as before.)
-2. Commit, then tag and push the tag:
+2. Create the release, either way:
+   - on github.com: **Releases** → **Draft a new release** → new tag `2026.11.6`
+     (with or without `v`) → **Publish release**, or
+   - with git: `git tag v2026.11.6` and `git push origin v2026.11.6`.
+3. The workflow builds the add-on with that version (the version in
+   `manifest.ini` is set from the tag) and attaches
+   `festival-2026.11.6.nvda-addon` to the release, after about 10 minutes
+   (tab **Actions**). A release created by the workflow itself gets the title
+   **Festival for NVDA 2026.11.6** and the `CHANGELOG.md` section as notes.
 
-   ```
-   git commit -am "Version 2026.11.6"
-   git push
-   git tag v2026.11.6
-   git push origin v2026.11.6
-   ```
-
-3. The workflow builds the add-on with version 2026.11.6 (the version in
-   `manifest.ini` is set from the tag) and creates the release
-   **Festival for NVDA 2026.11.6** with `festival-2026.11.6.nvda-addon` attached and
-   the `CHANGELOG.md` section as release notes.
-
-Without the command line: **Actions** → **Build add-on** → **Run workflow**,
-enter the version and tick **Publish a release**.
+To add the add-on to an existing release later: **Actions** → **Build add-on** →
+**Run workflow**, enter its version and tick **Publish a release**.
 
 If the release step fails with "Resource not accessible by integration", allow
 it once in the repository: **Settings** → **Actions** → **General** →
