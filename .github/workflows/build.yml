@@ -1,15 +1,20 @@
 # Builds festlib.dll and festhost64.exe from source and packs the NVDA add-on.
-#   - every push and pull request: build, the add-on is kept as a workflow artifact
-#   - a pushed tag v<version> (e.g. v2026.11.6): build and publish a GitHub release
-#     with festival-<version>.nvda-addon attached
-#   - "Run workflow" button (Actions tab): build; optional version and release
+#   - every push to main and every pull request: build; the add-on is kept as a
+#     workflow artifact (Actions tab, the run, "Artifacts")
+#   - a release published on github.com (Releases > Draft a new release), or a
+#     pushed tag like 2026.11.6 or v2026.11.6: build and attach
+#     festival-<version>.nvda-addon to that release (created if missing)
+#   - "Run workflow" button (Actions tab): build; with "Publish a release" the
+#     add-on is attached to the release of that version (created if missing)
 name: Build add-on
 
 on:
   push:
     branches: [main]
-    tags: ["v*"]
+    tags: ["v[0-9]*", "[0-9]*"]
   pull_request:
+  release:
+    types: [published]
   workflow_dispatch:
     inputs:
       version:
@@ -22,6 +27,12 @@ on:
 
 permissions:
   contents: write
+
+# creating a release on github.com with a new tag starts this workflow twice
+# (tag push and release); the runs for one version wait for each other
+concurrency:
+  group: build-${{ github.event.release.tag_name || github.ref_name }}
+  cancel-in-progress: false
 
 env:
   LLVM_MINGW_VERSION: "20251104"
@@ -38,15 +49,22 @@ jobs:
         env:
           INPUT_VERSION: ${{ inputs.version }}
           INPUT_RELEASE: ${{ inputs.release }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
-            version="${GITHUB_REF_NAME#v}"
+          tag=""
+          if [[ "$GITHUB_EVENT_NAME" == release ]]; then
+            tag="$RELEASE_TAG"
+          elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            tag="$GITHUB_REF_NAME"
+          fi
+          if [[ -n "$tag" ]]; then
+            version="${tag#v}"
             release=true
           elif [[ -n "$INPUT_VERSION" ]]; then
-            version="$INPUT_VERSION"
+            version="${INPUT_VERSION#v}"
             release="${INPUT_RELEASE:-false}"
           else
-            version=$(sed -n 's/^version = //p' addon/manifest.ini)
+            version=$(sed -n 's/^version = //p' addon/manifest.ini | tr -d '\r')
             release=false
           fi
           if [[ ! "$version" =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
@@ -55,7 +73,8 @@ jobs:
           fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "release=$release" >> "$GITHUB_OUTPUT"
-          echo "Add-on version $version, release: $release"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "Add-on version $version, release: $release, tag: ${tag:-none}"
 
       - uses: actions/setup-python@v7
         with:
@@ -110,6 +129,7 @@ jobs:
         run: |
           # the section "## <version>" of CHANGELOG.md
           awk -v v="${{ steps.version.outputs.version }}" '
+            { sub(/\r$/, "") }
             /^## / { on = ($2 == v); next }
             on { print }' CHANGELOG.md > notes.md
           if [ ! -s notes.md ]; then echo "Festival synthesizer for NVDA ${{ steps.version.outputs.version }}" > notes.md; fi
@@ -119,15 +139,24 @@ jobs:
         if: steps.version.outputs.release == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
-          version="${{ steps.version.outputs.version }}"
-          tag="v$version"
-          addon="dist/festival-$version.nvda-addon"
-          if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" "$addon" --clobber
+          addon="dist/festival-$VERSION.nvda-addon"
+          # the release of this tag, or for a manual run the release of this
+          # version (tag with or without "v"); a new one gets the tag v<version>
+          target=""
+          for t in $TAG "$VERSION" "v$VERSION"; do
+            if gh release view "$t" >/dev/null 2>&1; then target="$t"; break; fi
+          done
+          if [ -n "$target" ]; then
+            echo "Attaching $addon to the release $target"
+            gh release upload "$target" "$addon" --clobber
           else
-            gh release create "$tag" "$addon" \
-              --title "Festival for NVDA $version" \
+            target="${TAG:-v$VERSION}"
+            echo "Creating the release $target"
+            gh release create "$target" "$addon" \
+              --title "Festival for NVDA $VERSION" \
               --notes-file notes.md \
               --target "$GITHUB_SHA"
           fi
