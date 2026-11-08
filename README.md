@@ -77,7 +77,7 @@ Linux (or MSYS2 on Windows) with git, python3, meson, ninja, cmake, zip and
 llvm-mingw (https://github.com/mstorsjo/llvm-mingw, release 20251104):
 
 ```
-tools/build-addon.sh 2026.11.6 /path/to/llvm-mingw
+sh tools/build-addon.sh 2026.11.6 /path/to/llvm-mingw
 ```
 
 ## Licence
