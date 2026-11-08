@@ -1,0 +1,13 @@
+(require 'czech-unisyn)
+
+(defvar czech-krb-unisyn-index "DESTDIR/group/krb.group")
+
+(defvar czech-krb-int-params '((f0_mean 258) (f0_std 16)))
+
+(set! czech-insert-filling-vowels nil)
+
+(czech-proclaim-voice (krb (gender male)) ""
+  (czech-unisyn-init 'czech_krb czech-krb-unisyn-index)
+  (set! czech-int-simple-params* czech-krb-int-params))
+
+(provide 'czech_krb)

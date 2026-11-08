@@ -1,0 +1,42 @@
+Czech Festival Voice
+====================
+
+This package contains a complete adult female Czech diphone voice for Festival,
+including all files and tools necessary for its further development.
+
+You can find installation instructions in the file INSTALL.
+
+The way the package was created is thoroughly documented in the voice-czech-krb
+package.  Anybody who wants to create another Czech diphone voice for Festival
+can follow that documentation.
+
+The home page of the project is
+http://devel.freebsoft.org/festival-czech-diphone-database .
+
+This product was created and developed within the projects "Olomouc Chance for
+Blind Pupils" (reg. number CZ.1.07/1.2.12/02.0015) and "Support Center for
+Visually Impaired Pupils" (reg. number CZ.1.07/1.2.00/14.0111), which are
+co-financed from European Social Fund and Czech Republic's state budget.
+
+Questions, suggestions, etc. can be addressed to
+festival-czech@lists.freebsoft.org.
+
+
+COPYRIGHT NOTICE:
+
+  Copyright (C) 2005, 2010, 2011 Brailcom, o.p.s.
+ 
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-- Milan Zamazal

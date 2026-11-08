@@ -1,0 +1,13 @@
+(require 'czech-unisyn)
+
+(defvar czech-machac-unisyn-index "DESTDIR/group/machac.group")
+
+(defvar czech-machac-int-params '((f0_mean 75) (f0_std 6)))
+
+(set! czech-insert-filling-vowels nil)
+
+(czech-proclaim-voice (machac (gender male)) ""
+  (czech-unisyn-init 'czech_machac czech-machac-unisyn-index)
+  (set! czech-int-simple-params* czech-machac-int-params))
+
+(provide 'czech_machac)

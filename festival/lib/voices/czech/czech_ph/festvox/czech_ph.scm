@@ -1,0 +1,13 @@
+(require 'czech-unisyn)
+
+(defvar czech-ph-unisyn-index (path-append (cdr (assoc 'czech_ph voice-locations)) "group/ph.group"))
+
+(defvar czech-ph-int-params '((f0_mean 136) (f0_std 8)))
+
+(set! czech-insert-filling-vowels nil)
+
+(czech-proclaim-voice (ph (gender male)) ""
+  (czech-unisyn-init 'czech_ph czech-ph-unisyn-index)
+  (set! czech-int-simple-params* czech-ph-int-params))
+
+(provide 'czech_ph)

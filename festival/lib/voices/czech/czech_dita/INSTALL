@@ -1,0 +1,62 @@
+Installation instructions for voice-czech-dita
+==============================================
+
+* Prerequisities
+
+Building this voice was tested with Festival 2.0.95 and 2.1.
+Using this voice was tested with Festival 2.0.95.
+
+voice-czech-dita contains just a Czech voice.  To synthesize something, you need
+festival-czech package providing Czech support for Festival.  festival-czech is
+available from http://www.freebsoft.org/festival-czech .  To install it, follow
+its installation instructions.
+
+* Building the voice
+
+If you install from the binary distribution, skip this step.
+
+In order to build the voice data, make sure you have the following additional
+software installed:
+
+- Edinburgh Speech Tools (Debian package speech-tools).
+
+- Festival 2.0.95 or later; earlier versions might work but were not tested
+  (Debian package festival)
+
+Then just invoke `make'.  If it fails, it is most likely because you don't have
+installed all the tools mentioned above or you don't have properly set the
+Makefile variable estdir (it should point to the Edinburgh Speech Tools), which
+defaults to /usr (which is fine on e.g. Debian systems). To e.g. use Speech Tools
+installed into /usr/local, use:
+
+make estdir=/usr/local
+
+* Installing the voice
+
+Run `make install'.  To adjust the installation path, use the festival_voices_path
+Makefile variable, e.g.:
+
+make install festival_voices_path=/usr/local/share/festival/voices
+
+The default (when you do not specify the variable) is
+/usr/share/festival/voices.
+
+If you don't have installed the standard English Festival voice or if you want
+to set this Czech voice as the default Festival voice, add the following line
+to one of the Festival initialization files (usually /etc/festival.scm for
+system wide settings or ~/.festivalrc for user specific settings):
+
+  (set! voice_default 'voice_czech_dita)
+
+* Running the voice
+
+Start Festival and call:
+
+  (voice_czech_dita)
+
+Now Festival should speak Czech!
+
+
+Local Variables:
+mode: outline
+End:
