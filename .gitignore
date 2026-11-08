@@ -1,0 +1,11 @@
+/dist/
+/speech_tools/
+/festlib64/build-win64/
+/festlib64/win64.ini
+/festlib64/win64-toolchain.cmake
+/festival/build-win64/
+__pycache__/
+*.pyc
+*.nvda-addon
+festival.log
+festhost-crash.log

@@ -1,0 +1,5 @@
+# Keep every file byte for byte: Festival voice data, Scheme files and
+# Windows sources must not get their line endings changed by git.
+* -text
+*.sh text eol=lf
+*.yml text eol=lf
