@@ -27,7 +27,7 @@ git -C "$ROOT/speech_tools" -c advice.detachedHead=false checkout --quiet "$SPEE
 }
 
 # 2. festlib.dll + festhost64.exe
-"$ROOT/festlib64/build.sh" "$LLVM_MINGW"
+sh "$ROOT/festlib64/build.sh" "$LLVM_MINGW"
 BUILD="$ROOT/festlib64/build-win64"
 
 # 3. tests that need no Windows
