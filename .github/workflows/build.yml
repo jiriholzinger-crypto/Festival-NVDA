@@ -30,7 +30,7 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Version
         id: version
@@ -57,7 +57,7 @@ jobs:
           echo "release=$release" >> "$GITHUB_OUTPUT"
           echo "Add-on version $version, release: $release"
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -66,7 +66,7 @@ jobs:
 
       - name: Cache llvm-mingw
         id: cache-llvm
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/llvm-mingw
           key: llvm-mingw-${{ env.LLVM_MINGW_VERSION }}-ucrt-ubuntu-x86_64
@@ -80,8 +80,15 @@ jobs:
           tar -xf /tmp/llvm-mingw.tar.xz -C /tmp
           mv "/tmp/${name}" ~/llvm-mingw
 
+      - name: Prepare scripts
+        # Uploads made without git can lose the executable flag or get Windows
+        # line endings; the scripts run through sh and are normalized here.
+        run: |
+          sed -i 's/\r$//' tools/build-addon.sh festlib64/build.sh festlib64/*.diff
+          chmod +x tools/build-addon.sh festlib64/build.sh
+
       - name: Build
-        run: tools/build-addon.sh "${{ steps.version.outputs.version }}" ~/llvm-mingw
+        run: sh tools/build-addon.sh "${{ steps.version.outputs.version }}" ~/llvm-mingw
 
       - name: Check the add-on
         run: |
@@ -92,7 +99,7 @@ jobs:
           unzip -p "$addon" manifest.ini | grep -q "^version = ${{ steps.version.outputs.version }}$"
           ls -la "$addon"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: festival-${{ steps.version.outputs.version }}
           path: dist/festival-${{ steps.version.outputs.version }}.nvda-addon
