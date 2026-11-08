@@ -1,0 +1,21 @@
+*** EST_cutils_old.c	Mon Jun 21 17:40:39 2004
+--- /cygdrive/C/festival/speech_tools/utils/EST_cutils.c	Wed Aug 13 14:00:02 2008
+***************
+*** 71,78 ****
+      char *t1;
+      int i,j;
+  
+!     if (((tdir=getenv("TMPDIR")) == NULL) ||
+! 	((tdir=getenv("TEMP")) == NULL) ||
+  	((tdir=getenv("TMP")) == NULL))
+  	tdir = "/tmp";
+      
+--- 71,78 ----
+      char *t1;
+      int i,j;
+  
+!     if (((tdir=getenv("TMPDIR")) == NULL) &&
+! 	((tdir=getenv("TEMP")) == NULL) &&
+  	((tdir=getenv("TMP")) == NULL))
+  	tdir = "/tmp";
+      

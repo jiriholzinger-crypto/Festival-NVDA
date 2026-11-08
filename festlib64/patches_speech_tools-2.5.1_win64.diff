@@ -1,0 +1,330 @@
+diff --git a/base_class/EST_Pathname_win32.cc b/base_class/EST_Pathname_win32.cc
+index 30ed741..0ebecff 100644
+--- a/base_class/EST_Pathname_win32.cc
++++ b/base_class/EST_Pathname_win32.cc
+@@ -44,7 +44,7 @@
+  /************************************************************************/
+ 
+ #include <cstdio>
+-#include "EST_System.h"
++#include "EST_system.h"
+ #include "EST_Pathname.h"
+ 
+ void EST_Pathname::setup(void)
+diff --git a/base_class/string/EST_String.cc b/base_class/string/EST_String.cc
+index b7dc8e3..7b39087 100644
+--- a/base_class/string/EST_String.cc
++++ b/base_class/string/EST_String.cc
+@@ -1233,6 +1233,31 @@ EST_String EST_String::Number(int i, int b)
+   return EST_String(buf);
+ }
+ 
++EST_String EST_String::Number(long long i, int b)
++{
++  char buf[64];
++  const char *format;
++
++  switch (b)
++    {
++    case 8:
++      format="0%llo";
++      break;
++    case 10:
++      format="%lld";
++      break;
++    case 16:
++      format="0x%llx";
++      break;
++    default:
++      format="??%lld??";
++      break;
++    }
++  snprintf(buf, sizeof(buf), format, i);
++
++  return EST_String(buf);
++}
++
+ EST_String EST_String::Number(long i, int b)
+ {
+   char buf[64];
+diff --git a/include/EST_String.h b/include/EST_String.h
+index f7a2656..e9ed7c8 100644
+--- a/include/EST_String.h
++++ b/include/EST_String.h
+@@ -259,6 +259,9 @@ public:
+     /// Build string from a long integer.
+     static EST_String Number(long i, int base=10);
+ 
++    /// Build string from a long long integer (pointer-sized on Win64).
++    static EST_String Number(long long i, int base=10);
++
+     /// Build string from a double.
+     static EST_String Number(double d);
+ 
+diff --git a/include/EST_error.h b/include/EST_error.h
+index 53b251f..7c3358d 100644
+--- a/include/EST_error.h
++++ b/include/EST_error.h
+@@ -45,6 +45,7 @@
+ #ifdef __cplusplus
+ #include <cstdarg>
+ #include <cstdio>
++#include <stdint.h>
+ #else
+ #include <stdarg.h>
+ #include <stdio.h>
+@@ -186,7 +187,7 @@ enum EST_error_behaviour
+ /* but we need the basic versions.                                       */
+ 
+ inline const char *error_name(const EST_String val) {return val;}
+-inline const char *error_name(const void *val) {return EST_String::cat("<<ptr:", EST_String::Number((long)val, 16), ">>");}
++inline const char *error_name(const void *val) {return EST_String::cat("<<ptr:", EST_String::Number((long long)(intptr_t)val, 16), ">>");}
+ inline const char *error_name(const EST_Regex val) {return val.tostring();}
+ inline const char *error_name(int val) {return EST_String::Number(val);}
+ inline const char *error_name(long val) {return EST_String::Number(val);}
+diff --git a/include/EST_io_aux.h b/include/EST_io_aux.h
+index 5dd6997..95d9988 100644
+--- a/include/EST_io_aux.h
++++ b/include/EST_io_aux.h
+@@ -98,7 +98,7 @@ int compress_file(const EST_String &filename,
+ #define numeric_char(in) (((in < '9' ) && (in > '0')) ? TRUE : FALSE)
+ 
+ #ifdef WIN32
+-#include "Winsock2.h"
++#include <winsock2.h>
+ typedef SOCKET SOCKET_FD;
+ #else
+ typedef int SOCKET_FD;
+diff --git a/include/EST_math.h b/include/EST_math.h
+index 2a2994b..331624f 100644
+--- a/include/EST_math.h
++++ b/include/EST_math.h
+@@ -123,7 +123,7 @@ extern "C" {
+ #endif
+ 
+ /* WIN32 has stupid names for things */
+-#if defined(SYSTEM_IS_WIN32)
++#if defined(SYSTEM_IS_WIN32) && defined(_MSC_VER) && (_MSC_VER < 1800)
+ #define isfinite(X) _finite(X)
+ #define finite(X) _finite(X)
+ #define round(X) win32_round(X)
+diff --git a/include/EST_system.h b/include/EST_system.h
+index dd1d815..9bc6781 100644
+--- a/include/EST_system.h
++++ b/include/EST_system.h
+@@ -44,7 +44,9 @@
+ 
+ #if defined(SYSTEM_IS_WIN32)
+ #   define _WINSOCKAPI_		/* horrible hack */
++#   if defined(_MSC_VER)
+ #   define _LPCVOID_DEFINED     /* and another */
++#   endif
+ #   include <windows.h> 
+ #   include "win32/EST_defines_win32.h"
+ #   if defined(_MSC_VER)
+diff --git a/include/win32/EST_defines_win32.h b/include/win32/EST_defines_win32.h
+index d057503..4837aaf 100644
+--- a/include/win32/EST_defines_win32.h
++++ b/include/win32/EST_defines_win32.h
+@@ -45,8 +45,12 @@
+ /* #define size_t unsigned int */
+ #undef DIFFERENCE
+ /* #define M_PI (3.1415926) */
++#if defined(_MSC_VER) && (_MSC_VER < 1800)
+ #define isnan(N) 0
+ #define isnanf(N) 0
++#else
++#define isnanf(N) isnan(N)
++#endif
+ 
+ #undef min
+ #undef max
+diff --git a/include/win32/EST_socket_win32.h b/include/win32/EST_socket_win32.h
+index 584101d..fe1cdac 100644
+--- a/include/win32/EST_socket_win32.h
++++ b/include/win32/EST_socket_win32.h
+@@ -45,7 +45,10 @@
+ 
+ #define SOCKLEN_CAST (int *)
+ 
+-typedef int ssize_t;
++#if !defined(__MINGW32__)
++#include <BaseTsd.h>
++typedef SSIZE_T ssize_t;
++#endif
+ typedef int socklen_t;
+ #define NOT_A_SOCKET(FD) ((FD) == INVALID_SOCKET)
+ #define socket_error() WSAGetLastError()
+diff --git a/include/win32/EST_unix_win32.h b/include/win32/EST_unix_win32.h
+index 63ae570..57db616 100644
+--- a/include/win32/EST_unix_win32.h
++++ b/include/win32/EST_unix_win32.h
+@@ -49,8 +49,15 @@ using namespace std; // FIXME: To be removed
+ #endif
+ 
+ #include<stdint.h>
++#if defined(__MINGW32__)
++#include <unistd.h>
++#include <io.h>
++#include <fcntl.h>
++#endif
+ 
+-#ifdef __cplusplus
++#if defined(__MINGW32__)
++/* MinGW provides getpid, read, access, getcwd, chdir via unistd.h/io.h */
++#elif defined(__cplusplus)
+ static inline int getpid(void)
+ 	{ return (int)GetCurrentProcessId(); }
+ #else
+@@ -81,11 +88,13 @@ extern "C" {
+ }
+ #endif
+ 
++#if !defined(__MINGW32__)
+ #define access(FILE,MODE) unix_access(FILE, MODE)
+ 
+ #define F_OK 1
+ #define W_OK 2
+ #define R_OK 4
++#endif
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -96,7 +105,9 @@ extern "C" {
+ }
+ #endif
+ 
++#if !defined(__MINGW32__)
+ #define read(FD,B,N) _read((FD),(B),(N))
++#endif
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -106,8 +117,10 @@ extern "C" {
+ }
+ #endif
+ 
++#if !defined(__MINGW32__)
+ #define getcwd(P, L) unix_getcwd((P), (L))
+ #define chdir(D) SetCurrentDirectory(D)
++#endif
+ 
+ #if !defined(memcpy)
+ #   define memcpy(DST, SRC, N) CopyMemory((DST), (SRC), (N))
+diff --git a/meson_options.txt b/meson_options.txt
+index 18fbf08..5da2a29 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -21,3 +21,4 @@ option('wagon', type: 'boolean', value: true)
+ option('siod', type: 'boolean', value: true)
+ option('rxp', type: 'boolean', value: true)
+ 
++option('openmp', type: 'feature', value: 'auto', description: 'OpenMP for wagon (disable for a self-contained Windows DLL)')
+diff --git a/rxp/url.c b/rxp/url.c
+index 4f5bdae..c8ea325 100644
+--- a/rxp/url.c
++++ b/rxp/url.c
+@@ -52,6 +52,7 @@
+ #endif /* FOR_LT */
+ 
+ #include <stdio.h>
++#include <stdint.h>
+ #include <ctype.h>
+ #include <stdlib.h>
+ #include <assert.h>
+diff --git a/siod/Makefile b/siod/Makefile
+index a487ff3..21a1304 100644
+--- a/siod/Makefile
++++ b/siod/Makefile
+@@ -50,7 +50,7 @@ TOP=..
+ DIRNAME=siod
+ EDITLINEH = siodeditline.h editline.h el_unix.h
+ OLD_H = EST_SiodServer.h 
+-H = siodp.h io.h slib_python.h $(EDITLINEH)
++H = siodp.h siod_io.h slib_python.h $(EDITLINEH)
+ TSRCS = siod.cc siod_est.cc
+ ELSRCS = siodeditline.c el_complete.c editline.c el_sys_unix.c
+ CSRCS =  siodeditline.c 
+diff --git a/siod/io.cc b/siod/io.cc
+index bdf99e6..4fdcbc7 100644
+--- a/siod/io.cc
++++ b/siod/io.cc
+@@ -51,7 +51,7 @@
+ #include "EST_bool.h"
+ #include "siod.h"
+ #include "siodp.h"
+-#include "io.h"
++#include "siod_io.h"
+ 
+ using std::cout;
+ 
+diff --git a/siod/io.h b/siod/siod_io.h
+similarity index 100%
+rename from siod/io.h
+rename to siod/siod_io.h
+diff --git a/siod/siodeditline.c b/siod/siodeditline.c
+index 900a526..5abcda3 100644
+--- a/siod/siodeditline.c
++++ b/siod/siodeditline.c
+@@ -62,6 +62,7 @@ extern char *repl_prompt;
+ /* command lin editing                                                 */
+ int el_no_echo;
+ int editline_histsize;
++char *editline_history_file = ".editline_history";
+ 
+ int siod_el_getc(FILE *f)
+ {
+diff --git a/siod/siodp.h b/siod/siodp.h
+index ba912f8..b88d891 100644
+--- a/siod/siodp.h
++++ b/siod/siodp.h
+@@ -11,7 +11,7 @@ Declarations which are private to SLIB.C internals.
+ #ifndef __SIODP_H__
+ #define __SIODP_H__
+ 
+-#include "io.h"
++#include "siod_io.h"
+ 
+ typedef int (*repl_getc_fn)(FILE *);
+ typedef void (*repl_ungetc_fn)(int,FILE *);
+diff --git a/siod/slib.cc b/siod/slib.cc
+index 67732aa..806f872 100644
+--- a/siod/slib.cc
++++ b/siod/slib.cc
+@@ -793,8 +793,8 @@ void gc_unprotect(LISP *location)
+     }
+     if (reg == 0)
+     {
+-	fprintf(stderr,"Cannot unprotected %lx: never protected\n",
+-		(unsigned long)*location);
++	fprintf(stderr,"Cannot unprotected %p: never protected\n",
++		(void *)*location);
+ 	fflush(stderr);
+     }
+     else if (l==0) /* its the first one in the list that needs to be deleted */
+diff --git a/stats/wagon/meson.build b/stats/wagon/meson.build
+index b3ba8e6..386cd6a 100644
+--- a/stats/wagon/meson.build
++++ b/stats/wagon/meson.build
+@@ -1,4 +1,4 @@
+-openmp = dependency('openmp', required: false) # meson builtin
++openmp = dependency('openmp', required: get_option('openmp')) # meson builtin
+ 
+ stats_wagon_deps = []
+ stats_wagon_cpp_args = ['-DINSTANTIATE_TEMPLATES']
+diff --git a/stats/wagon/wagon.cc b/stats/wagon/wagon.cc
+index e0e27bb..d1e60eb 100644
+--- a/stats/wagon/wagon.cc
++++ b/stats/wagon/wagon.cc
+@@ -815,7 +815,11 @@ static float wgn_random_number(float x)
+      * implies a loss of precision. C++-11 has std::uniform_real_distribution
+      * that provides a cleaner solution. Consider adopting c++-11
+      */
++#if defined(SYSTEM_IS_WIN32)
++    return (((float)rand())/(float)RAND_MAX)*x;
++#else
+     return (((float)random())/(float)RAND_MAX)*x;
++#endif
+ }
+ 
+ #ifdef OMP_WAGON

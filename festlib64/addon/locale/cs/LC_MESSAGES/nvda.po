@@ -1,0 +1,136 @@
+# Czech translation of the Festival synthesizer add-on for NVDA.
+# Copyright (C) 2026 Jiří Holzinger
+msgid ""
+msgstr ""
+"Project-Id-Version: festival 2026.11.5\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+msgid "Festival Speech Synthesis System"
+msgstr "Hlasový syntezátor Festival"
+
+msgid "&Festival voices..."
+msgstr "&Hlasy Festivalu..."
+
+msgid "Download more voices for the Festival synthesizer"
+msgstr "Stáhnout další hlasy pro syntezátor Festival"
+
+msgid "Festival voices"
+msgstr "Hlasy Festivalu"
+
+msgid "&Voices on festvox.org:"
+msgstr "&Hlasy na festvox.org:"
+
+msgid "Voice"
+msgstr "Hlas"
+
+msgid "Description"
+msgstr "Popis"
+
+msgid "Size"
+msgstr "Velikost"
+
+msgid "Status"
+msgstr "Stav"
+
+msgid "&Install"
+msgstr "&Instalovat"
+
+msgid "&Remove"
+msgstr "&Odebrat"
+
+msgid "Re&fresh list"
+msgstr "O&bnovit seznam"
+
+msgid "Open voice &folder"
+msgstr "Otevřít &složku s hlasy"
+
+msgid "&Close"
+msgstr "&Zavřít"
+
+msgid "included"
+msgstr "součástí doplňku"
+
+msgid "installed"
+msgstr "nainstalováno"
+
+msgid "Loading the voice list from festvox.org..."
+msgstr "Načítám seznam hlasů z festvox.org..."
+
+msgid "Cannot load the voice list: {error}"
+msgstr "Seznam hlasů nelze načíst: {error}"
+
+msgid "{count} voices available."
+msgstr "Dostupných hlasů: {count}."
+
+msgid "Downloading {name}"
+msgstr "Stahování {name}"
+
+msgid "Downloading {name}..."
+msgstr "Stahuji {name}..."
+
+msgid "{done:.1f} of {total:.1f} MB"
+msgstr "{done:.1f} z {total:.1f} MB"
+
+msgid "Unpacking..."
+msgstr "Rozbaluji..."
+
+msgid "Installation failed: {error}"
+msgstr "Instalace selhala: {error}"
+
+msgid "Cancelled."
+msgstr "Zrušeno."
+
+msgid "Installed: {names}"
+msgstr "Nainstalováno: {names}"
+
+msgid "This voice needs the OALD pronunciation dictionary. Its licence allows non-commercial use only. Download it now?"
+msgstr "Tento hlas potřebuje výslovnostní slovník OALD. Jeho licence povoluje jen nekomerční použití. Stáhnout ho nyní?"
+
+msgid "This voice needs the {name} dictionary. Download it now?"
+msgstr "Tento hlas potřebuje slovník {name}. Stáhnout ho nyní?"
+
+msgid "Choose the new voice in NVDA's voice settings (NVDA+Control+V)."
+msgstr "Nový hlas vyberte v nastavení hlasu NVDA (NVDA+Ctrl+V)."
+
+msgid "Select Festival as the synthesizer to use the new voice."
+msgstr "Pro použití nového hlasu vyberte syntezátor Festival."
+
+msgid "Remove the voice {name}?"
+msgstr "Odebrat hlas {name}?"
+
+msgid "Removed: {name}"
+msgstr "Odebráno: {name}"
+
+msgid "Cannot remove the voice: {error}"
+msgstr "Hlas nelze odebrat: {error}"
+
+msgid "Please wait until the download is finished, or cancel it."
+msgstr "Počkejte prosím na dokončení stahování, nebo ho zrušte."
+
+msgid "American English, male (diphone)"
+msgstr "americká angličtina, muž (difonový)"
+
+msgid "British English, male (diphone, needs the OALD lexicon)"
+msgstr "britská angličtina, muž (difonový, potřebuje slovník OALD)"
+
+msgid "Scottish English, male (ClusterGen)"
+msgstr "skotská angličtina, muž (ClusterGen)"
+
+msgid "American English, male (ClusterGen)"
+msgstr "americká angličtina, muž (ClusterGen)"
+
+msgid "American English, female (ClusterGen)"
+msgstr "americká angličtina, žena (ClusterGen)"
+
+msgid "Canadian English, male (ClusterGen)"
+msgstr "kanadská angličtina, muž (ClusterGen)"
+
+msgid "Indian English, male (ClusterGen)"
+msgstr "indická angličtina, muž (ClusterGen)"
+
+msgid "English (CMU voice)"
+msgstr "angličtina (hlas CMU)"

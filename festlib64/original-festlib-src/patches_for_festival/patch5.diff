@@ -1,0 +1,44 @@
+*** /cygdrive/C/festival/speech_tools/speech_class/EST_wave_io.cc	Thu Jan 12 18:37:51 2006
+--- EST_wave_io.cc	Sat Nov  1 17:30:45 2008
+***************
+*** 70,78 ****
+  {
+      char *p;
+      int val;
+  
+!     if (((p=strstr(hdr,field)) != NULL) &&
+  	(strncmp(" -i ",p+strlen(field),4) == 0))
+      {
+  	sscanf(p+strlen(field)+4,"%d",&val);
+  	return val;
+--- 70,78 ----
+  {
+      char *p;
+      int val;
+  
+!     if (((p=const_cast<char*>(strstr(hdr,field))) != NULL) &&
+  	(strncmp(" -i ",p+strlen(field),4) == 0))
+      {
+  	sscanf(p+strlen(field)+4,"%d",&val);
+  	return val;
+***************
+*** 86,94 ****
+  {
+      char *p,*val;
+      int size;
+  
+!     if (((p=strstr(hdr,field)) != NULL) &&
+  	(strncmp(" -s",p+strlen(field),3) == 0))
+      {
+  	sscanf(p+strlen(field)+3,"%d",&size);
+  	val = walloc(char,size+1);
+--- 86,94 ----
+  {
+      char *p,*val;
+      int size;
+  
+!     if (((p=const_cast<char*>(strstr(hdr,field))) != NULL) &&
+  	(strncmp(" -s",p+strlen(field),3) == 0))
+      {
+  	sscanf(p+strlen(field)+3,"%d",&size);
+  	val = walloc(char,size+1);

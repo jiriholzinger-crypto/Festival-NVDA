@@ -1,0 +1,23 @@
+*** EST_FlatTargetCost_old.h	Sat Jul  8 17:20:49 2006
+--- /cygdrive/C/festival/festival/src/modules/MultiSyn/EST_FlatTargetCost.h	Sun Nov  2 15:49:06 2008
+***************
+*** 54,62 ****
+    VOWEL, SIL,BAD_DUR, NBAD_DUR, BAD_F0,
+    SYL, SYL_STRESS, N_SIL, N_VOWEL,
+    NSYL, NSYL_STRESS,
+    RC, NNBAD_DUR, NNSYL, LC, PBAD_DUR,
+!   PSYL, WORD, NWORD, NNWORD, PWORD,
+    SYLPOS, WORDPOS, PBREAK, 
+    POS, PUNC, NPOS, NPUNC,
+    TCHI_LAST
+  } ;
+--- 54,62 ----
+    VOWEL, SIL,BAD_DUR, NBAD_DUR, BAD_F0,
+    SYL, SYL_STRESS, N_SIL, N_VOWEL,
+    NSYL, NSYL_STRESS,
+    RC, NNBAD_DUR, NNSYL, LC, PBAD_DUR,
+!   PSYL, MY_WORD, NWORD, NNWORD, MY_PWORD,
+    SYLPOS, WORDPOS, PBREAK, 
+    POS, PUNC, NPOS, NPUNC,
+    TCHI_LAST
+  } ;

@@ -1,0 +1,108 @@
+--- a/src/arch/festival/festival.cc	2025-03-23 13:04:04.000000000 +0100
++++ b/src/arch/festival/festival.cc	2026-11-03 05:39:50.595313960 +0100
+@@ -80,6 +80,11 @@
+ #endif
+ 
+ const char *festival_libdir = FTLIBDIR;
++#if defined(SYSTEM_IS_WIN32)
++#define FESTIVAL_NULL_DEVICE "NUL"
++#else
++#define FESTIVAL_NULL_DEVICE "/dev/null"
++#endif
+ ostream *cdebug;
+ static int festival_server_port = 1314;
+ static EST_StrList sub_copyrights;
+@@ -102,8 +107,8 @@
+ 	/* siod_fringe_init();	*/	// and for talking to fringe.
+ 	
+ 	siod_prog_name = "festival";
+-	cdebug = new ofstream("/dev/null");  // This wont work on Win/NT
+-	stddebug = fopen("/dev/null","w");
++	cdebug = new ofstream(FESTIVAL_NULL_DEVICE);  // This wont work on Win/NT
++	stddebug = fopen(FESTIVAL_NULL_DEVICE,"w");
+ 	
+ 	festival_lisp_vars();
+ 	festival_lisp_funcs();
+@@ -289,8 +294,8 @@
+ 
+     if (arg == NIL)
+     {   // this might be a problem on non-Unix machines
+-	cdebug = new ofstream("/dev/null");
+-	stddebug = fopen("/dev/null","w");
++	cdebug = new ofstream(FESTIVAL_NULL_DEVICE);
++	stddebug = fopen(FESTIVAL_NULL_DEVICE,"w");
+     }
+     else
+     {
+--- a/src/arch/festival/server.cc	2025-03-23 13:04:04.000000000 +0100
++++ b/src/arch/festival/server.cc	2026-11-03 05:31:04.669351709 +0100
+@@ -122,7 +122,7 @@
+     serv_addr.sin_port = htons(port);
+     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+ 
+-    if (bind(fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) != 0)
++    if (::bind(fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) != 0)
+     {
+ 	cerr << "socket: bind failed" << endl;
+ 	festival_error();
+--- a/src/modules/UniSyn/us_mapping.cc	2025-03-23 13:04:04.000000000 +0100
++++ b/src/modules/UniSyn/us_mapping.cc	2026-11-03 05:29:26.791813681 +0100
+@@ -168,12 +168,14 @@
+ 	
+             // find closest pitchmark (assume only need forward search from current
+             // point, since pitchmarks should always be increasing)
+-            while( (apm_i<=s_i_end) && (fabs((next_apm_t*m)-tpm_t) <= fabs((apm_t*m)-tpm_t)) ){
++            // festlib: bound check (reading past the last pitchmark crashed on Windows)
++            while( (apm_i<s_i_end) && (fabs((next_apm_t*m)-tpm_t) <= fabs((apm_t*m)-tpm_t)) ){
+                 // 	  printf("(next_apm_t apm_t) %f %f\n", 
+                 // 		 fabs((next_apm_t*m)-tpm_t), fabs((apm_t*m)-tpm_t) );
+                 apm_t = next_apm_t;
+                 ++apm_i;
+-                next_apm_t = source_pm.t(apm_i+1)-apm_t_off;
++                if (apm_i < s_i_end)
++                    next_apm_t = source_pm.t(apm_i+1)-apm_t_off;
+             }
+ 	
+             // // 	printf( "tpm %d = apm %d\n", i, apm_i );
+--- a/src/modules/hts_engine/fest2hts_engine.cc	2025-03-23 13:04:04.000000000 +0100
++++ b/src/modules/hts_engine/fest2hts_engine.cc	2026-11-03 05:29:35.369523795 +0100
+@@ -155,6 +155,9 @@
+   /* get speech speed */
+   speech_speed = (double) get_param_float("-r", hts_engine_params, 1.0);
+ 
++  /* festlib: pitch shift in half tones ("-fm", same as hts_engine -fm) */
++  double half_tone = (double) get_param_float("-fm", hts_engine_params, 0.0);
++
+   /* open input file pointers */
+   labfn =  (char *) get_param_str("-labelfile", hts_output_params, NULL);
+   /* get input label as string */
+@@ -197,6 +200,9 @@
+   /* set speech speed */
+   HTS_Engine_set_speed(engine, speech_speed);
+ 
++  /* set additional half tone (always set, so a previous value is reset) */
++  HTS_Engine_add_half_tone(engine, half_tone);
++
+   /* generate speech */
+   if (u->relation("Segment")->first()) {       /* only if there are segments */
+     /* Load label from file pointer or from string */
+--- a/src/modules/hts_engine/HTS_audio.c	2025-03-23 13:04:04.000000000 +0100
++++ b/src/modules/hts_engine/HTS_audio.c	2026-11-03 05:36:15.405708523 +0100
+@@ -85,7 +85,7 @@
+ } HTS_AudioInterface;
+ 
+ /* HTS_AudioInterface_callback_function: callback function from audio device */
+-static void CALLBACK HTS_AudioInterface_callback_function(HWAVEOUT hwaveout, UINT msg, DWORD user_data, DWORD param1, DWORD param2)
++static void CALLBACK HTS_AudioInterface_callback_function(HWAVEOUT hwaveout, UINT msg, DWORD_PTR user_data, DWORD_PTR param1, DWORD_PTR param2)
+ {
+    WAVEHDR *wavehdr = (WAVEHDR *) param1;
+    HTS_AudioInterface *audio_interface = (HTS_AudioInterface *) user_data;
+@@ -175,7 +175,7 @@
+    audio_interface->waveformatex.nBlockAlign = AUDIO_CHANNEL * audio_interface->waveformatex.wBitsPerSample / 8;
+    audio_interface->waveformatex.nAvgBytesPerSec = sampling_frequency * audio_interface->waveformatex.nBlockAlign;
+    /* open */
+-   result = waveOutOpen(&audio_interface->hwaveout, WAVE_MAPPER, &audio_interface->waveformatex, (DWORD) HTS_AudioInterface_callback_function, (DWORD) audio_interface, CALLBACK_FUNCTION);
++   result = waveOutOpen(&audio_interface->hwaveout, WAVE_MAPPER, &audio_interface->waveformatex, (DWORD_PTR) HTS_AudioInterface_callback_function, (DWORD_PTR) audio_interface, CALLBACK_FUNCTION);
+    if (result != MMSYSERR_NOERROR) {
+       HTS_error(0, "hts_engine: Failed to open your output audio_interface device to play waveform.\n");
+       HTS_free(audio_interface);

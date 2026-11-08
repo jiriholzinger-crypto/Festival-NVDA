@@ -1,0 +1,7 @@
+Required libraries and programs:
+1. Festival Speech Synthesis System 1.96:beta. Its source code can be downloaded from www.festvox.org. The compilation process is described in the documentation of Festival. The system uses Cygwin to generate makefiles for Microsoft Visual C++, so if you don't use Cygwin, you'll have to install it. Its website is www.cygwin.com. Because of some bugs in Festival you should apply all the patches from the patches_for_festival directory before compiling the system. It should be done using the "patch" command in Cygwin. After applying the patches Festival can be compiled with Microsoft Visual C++ 2008 Express Edition without any problems, but I can't test it with the previous versions of the compiler.
+2. Festival-freebsoft-utils from www.freebsoft.org.
+3. TinyXML library from http://www.grinninglizard.com/tinyxml/.
+4. Boost C++ Libraries. The project's home page is www.boost.org.
+5. Thread_safe_signals. This is a thread-safe variant of the official Boost.Signals library. It can be found at http://www.comedi.org/projects/thread_safe_signals/libs/thread_safe_signals/doc/html/index.html.
+6. The Boost.Jam build tool is used to build the Python extension, because it makes compiling software depending on the Boost libraries easier. This utility can be downloaded from boost.org.

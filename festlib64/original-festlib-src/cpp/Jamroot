@@ -1,0 +1,55 @@
+use-project boost : C:/boost/ ;
+
+variant debug_light : <optimization>off <debug-symbols>on <inlining>off <runtime-debugging>off <define>REDIRECT_STDERR ;
+
+project
+ : requirements 
+  <threading>multi 
+  <runtime-link>static 
+  <cxxflags>/EHa
+    <library>/boost/regex//boost_regex/<link>static/<runtime-link>static 
+  <library>/boost/thread//boost_thread/<link>static/<runtime-link>static 
+  <library>/boost/date_time//boost_date_time/<link>static/<runtime-link>static ;
+
+lib lib_festival : : 
+ <name>libfestival <search>C:/festival/festival/src/lib 
+ : : <include>C:/festival/festival/src/include ;
+
+lib lib_estbase : : 
+ <name>libestbase <search>C:/festival/speech_tools/lib : : 
+ <include>C:/festival/speech_tools/include ;
+
+lib lib_eststring : : 
+ <name>libeststring <search>C:/festival/speech_tools/lib : : 
+ <include>C:/festival/speech_tools/include ;
+
+lib lib_estools : : 
+ <name>libestools <search>C:/festival/speech_tools/lib : : 
+ <include>C:/festival/speech_tools/include ;
+
+lib lib_user32 : : <name>user32 ;
+lib lib_wsock32 : : <name>wsock32 ;
+lib lib_winmm : : <name>winmm ;
+
+lib lib_tinyxml : : 
+ <file>C:/tinyxml/Release_STL/tinyxml_STL.lib : : 
+ <include>C:/tinyxml ;
+
+lib festlib : 
+ main.cpp 
+ player.cpp 
+ lib_user32 
+ lib_wsock32 
+ lib_winmm 
+ lib_eststring 
+ lib_estbase 
+ lib_estools 
+ lib_festival 
+ lib_tinyxml : 
+ <link>shared 
+ <define>SYSTEM_IS_WIN32 
+ <define>UNICODE 
+ <define>TIXML_USE_STL 
+ ;
+
+install ../../synthDriver : festlib ;
